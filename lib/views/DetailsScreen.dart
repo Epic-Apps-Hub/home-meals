@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import '../views/widgets/bottomSheetContainer.dart';
 import 'package:fluttericon/linecons_icons.dart';
@@ -47,10 +48,13 @@ class _DetailsScreenState extends State<DetailsScreen>
   final ItemScrollController itemScrollController = ItemScrollController();
   final ItemPositionsListener itemPositionsListener =
       ItemPositionsListener.create();
+
+  ScrollController scrollController = ScrollController();
   var top = 0.0;
   TabController tabController;
 
   Box priceAndQuantityBox;
+  int ind = 3000;
 
   @override
   void initState() {
@@ -67,8 +71,8 @@ class _DetailsScreenState extends State<DetailsScreen>
 
   @override
   void dispose() {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        statusBarBrightness: Brightness.light, statusBarColor: yellow));
+    /* SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+        statusBarBrightness: Brightness.light, statusBarColor: yellow));*/
     tabController = TabController(length: 2, vsync: this);
 
     super.dispose();
@@ -151,570 +155,582 @@ class _DetailsScreenState extends State<DetailsScreen>
         body: BlocBuilder<KitchensBloc, KitchensState>(
           builder: (ctx, state) {
             if (state is KitchenLoaded) {
+              EasyLoading.dismiss();
               String address = state.kitchen.data.address;
-              return NestedScrollView(
-                headerSliverBuilder: (ctx, d) {
-                  return [
-                    SliverAppBar(
-                      brightness: Brightness.light,
-                      bottom: PreferredSize(
-                        preferredSize: Size.fromHeight(50),
-                        child: Container(
-                          height: 40,
-                          width: _width,
-                          child: BlocBuilder<MenuBloc, MenuState>(
-                            builder: (context, state) {
-                              if (state is MenuLoaded) {
-                                List<String> titles = [];
-                                for (int i = 0;
-                                    i < state.categories.length;
-                                    i++) {
-                                  titles.add(state.categories[i].name);
+              return ScrollConfiguration(
+                behavior: MyBehavior(),
+                child: NestedScrollView(
+                  controller: scrollController,
+                  headerSliverBuilder: (ctx, d) {
+                    return [
+                      SliverAppBar(
+                        brightness: Brightness.light,
+                        bottom: PreferredSize(
+                          preferredSize: Size.fromHeight(50),
+                          child: Container(
+                            height: 40,
+                            width: _width,
+                            child: BlocBuilder<MenuBloc, MenuState>(
+                              builder: (context, state) {
+                                if (state is MenuLoaded) {
+                                  List<String> titles = [];
+                                  for (int i = 0;
+                                      i < state.categories.length;
+                                      i++) {
+                                    titles.add(state.categories[i].name);
+                                  }
+                                  print(titles);
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0),
+                                    child: ScrollConfiguration(
+                                      behavior: MyBehavior(),
+                                      child: ListView.builder(
+                                        itemCount: titles.length,
+                                        scrollDirection: Axis.horizontal,
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          return InkWell(
+                                            onTap: () {
+                                              scrollController.animateTo(430,
+                                                  duration: Duration(
+                                                      milliseconds: 400),
+                                                  curve: Curves.ease);
+                                              setState(() {
+                                                ind = index;
+                                              });
+                                              itemScrollController.jumpTo(
+                                                  index: index,
+                                                );
+                                            },
+                                            child: Container(
+                                              height: 40,
+                                              width: 80,
+                                              child: Column(
+                                                children: [
+                                                  Text(titles[index] ?? "",
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 17,
+                                                        fontFamily: 'tajwal',
+                                                      )),
+                                                  ind == index
+                                                      ? Container(
+                                                          height: 3,
+                                                          width: 40,
+                                                          color: mainColor,
+                                                        )
+                                                      : Container()
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  );
                                 }
-                                ScrollConfiguration(
-                                  behavior: MyBehavior(),
-                                  child: ListView.builder(
-                                    itemCount: titles.length,
-                                    scrollDirection: Axis.horizontal,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      return Container(
-                                        height: 56,
-                                        width: 100,
-                                        child: Text(
-                                          titles[index] ?? "",
-                                          style: TextStyle(color: Colors.black),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                );
-                              }
-                              return Container();
-                            },
+                                return Container();
+                              },
+                            ),
                           ),
                         ),
-                      ),
-                      expandedHeight: _height * .65,
-                      automaticallyImplyLeading: false,
-                      flexibleSpace: LayoutBuilder(
-                        builder:
-                            (BuildContext context, BoxConstraints constraints) {
-                          top = constraints.biggest.height;
+                        expandedHeight: _height * .35,
+                        automaticallyImplyLeading: false,
+                        flexibleSpace: LayoutBuilder(
+                          builder: (BuildContext context,
+                              BoxConstraints constraints) {
+                            top = constraints.biggest.height;
 
-                          return FlexibleSpaceBar(
-                              centerTitle: true,
-                              title: AnimatedOpacity(
-                                  duration: Duration(milliseconds: 300),
-                                  opacity:
-                                      top == 138.36363636363637 ? 1.0 : 0.0,
-                                  child: Padding(
-                                    padding:
-                                        const EdgeInsets.only(bottom: 40.0),
-                                    child: Text(
-                                      widget.name ?? "",
-                                      style: TextStyle(
-                                          fontFamily: 'tajwal',
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black),
-                                    ),
-                                  )), ////////////////////////////////////////remove )+;
-                              background: Container(
-                                color: Colors.white,
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      width: _width,
-                                      height: _height * .18,
-                                      child: Image.network(
-                                        widget.picUrl,
-                                        fit: BoxFit.cover,
+                            return FlexibleSpaceBar(
+                                centerTitle: true,
+                                title: AnimatedOpacity(
+                                    duration: Duration(milliseconds: 300),
+                                    opacity:
+                                        top == 138.36363636363637 ? 1.0 : 0.0,
+                                    child: Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 40.0),
+                                      child: Text(
+                                        widget.name ?? "",
+                                        style: TextStyle(
+                                            fontFamily: 'tajwal',
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black),
                                       ),
-                                    ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 28.0),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            state.kitchen.data.name ?? "",
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontFamily: 'tajwal',
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          Container(
-                                            width: 95,
-                                            child: Center(
-                                                child: Text(
-                                              state.kitchen.data.discount
-                                                      .toString() ??
-                                                  "" + "خصم %",
-                                              style: TextStyle(
-                                                  color: yellow,
-                                                  fontFamily: 'tajwal',
-                                                  fontWeight: FontWeight.w800),
-                                            )),
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              boxShadow: [
-                                                BoxShadow(
-                                                    blurRadius: 1,
-                                                    color: Colors.grey
-                                                        .withOpacity(.5),
-                                                    offset: Offset(.5, 1))
-                                              ],
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(2)),
-                                            ),
-                                            height: 30,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 15,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 28.0),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            state.kitchen.data.address ?? "",
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontFamily: 'tajwal',
-                                              fontSize: 16,
-                                            ),
-                                          ),
-                                          Container(
-                                            width: 105,
-                                            child: Center(
-                                                child: Row(
-                                              children: [
-                                                state.kitchen.data.isOpen
-                                                    ? CircleAvatar(
-                                                        backgroundColor: yellow,
-                                                        radius: 6,
-                                                      )
-                                                    : CircleAvatar(
-                                                        backgroundColor:
-                                                            Colors.grey,
-                                                        radius: 6,
-                                                      ),
-                                                SizedBox(
-                                                  width: 10,
-                                                ),
-                                                state.kitchen.data.isOpen
-                                                    ? Text(
-                                                        "المطبخ مفتوح",
-                                                        style: TextStyle(
-                                                            color: yellow,
-                                                            fontFamily:
-                                                                'tajwal',
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w800),
-                                                      )
-                                                    : Text(
-                                                        "المطبخ غير مفتوح",
-                                                        style: TextStyle(
-                                                            color: Colors.grey,
-                                                            fontFamily:
-                                                                'tajwal',
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w800),
-                                                      ),
-                                              ],
-                                            )),
-                                            height: 30,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 28.0),
-                                      child: Container(
+                                    )), ////////////////////////////////////////remove )+;
+                                background: Container(
+                                  color: Colors.white,
+                                  child: Column(
+                                    children: [
+                                      Container(
                                         width: _width,
-                                        height: _height * .05,
+                                        height: _height * .18,
+                                        child: Image.network(
+                                          widget.picUrl,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 28.0),
                                         child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Row(
-                                              children: [
-                                                RatingBar.builder(
-                                                  initialRating: double.parse(
-                                                      state.kitchen.reviews
-                                                          .total),
-                                                  minRating: 1,
-                                                  textDirection:
-                                                      TextDirection.ltr,
-                                                  direction: Axis.horizontal,
-                                                  allowHalfRating: true,
-                                                  itemCount: 5,
-                                                  itemSize: 20,
-                                                  updateOnDrag: false,
-                                                  ignoreGestures: true,
-                                                  glowColor: yellow,
-                                                  itemPadding:
-                                                      EdgeInsets.symmetric(
-                                                          horizontal: 4.0),
-                                                  itemBuilder: (context, _) =>
-                                                      Icon(
-                                                    Icons.star,
-                                                    color: yellow,
-                                                  ),
-                                                  onRatingUpdate: (rating) {
-                                                    print(rating);
-                                                  },
-                                                ),
-                                                Text(
-                                                  state.kitchen.reviews.total ??
-                                                      "",
-                                                  style: TextStyle(
-                                                    color: Colors.black,
-                                                  ),
-                                                ),
-                                                Text(
-                                                    '(${state.kitchen.reviews.count})')
-                                              ],
+                                            Text(
+                                              state.kitchen.data.name ?? "",
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontFamily: 'tajwal',
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold),
                                             ),
-                                            InkWell(
-                                              onTap: () {
-                                                Navigator.push(
-                                                    context,
-                                                    PageTransition(
-                                                        child:
-                                                            MultiBlocProvider(
-                                                          providers: [
-                                                            BlocProvider<
-                                                                    KitchensBloc>(
-                                                                create: (context) =>
-                                                                    KitchensBloc(
-                                                                        FetchAllKitchens())
-                                                                      ..add(
-                                                                        FetchSpecificKitchen(state
-                                                                            .kitchen
-                                                                            .data
-                                                                            .slug),
-                                                                      )),
-                                                            BlocProvider<
-                                                                ReviewsblocBloc>(
-                                                              create: (context) =>
-                                                                  ReviewsblocBloc(
-                                                                      FetchAllKitchens())
-                                                                    ..add(FetchSpecificKitchenComments(state
-                                                                        .kitchen
-                                                                        .data
-                                                                        .id
-                                                                        .toString())),
-                                                            )
-                                                          ],
-                                                          child: RatingPage(),
-                                                        ),
-                                                        type: PageTransitionType
-                                                            .rightToLeft));
-                                              },
-                                              child: Text(
-                                                "التقييمات",
+                                            Container(
+                                              width: 95,
+                                              child: Center(
+                                                  child: Text(
+                                                state.kitchen.data.discount
+                                                        .toString() ??
+                                                    "" + "خصم %",
                                                 style: TextStyle(
                                                     color: yellow,
-                                                    decoration: TextDecoration
-                                                        .underline,
                                                     fontFamily: 'tajwal',
-                                                    fontWeight: FontWeight.w800,
-                                                    fontSize: 18),
+                                                    fontWeight:
+                                                        FontWeight.w800),
+                                              )),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                      blurRadius: 1,
+                                                      color: Colors.grey
+                                                          .withOpacity(.5),
+                                                      offset: Offset(.5, 1))
+                                                ],
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(2)),
                                               ),
-                                            )
+                                              height: 30,
+                                            ),
                                           ],
                                         ),
                                       ),
-                                    ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 14.0),
-                                          child: Text(
-                                            "معلومات عن المطبخ",
-                                            textAlign: TextAlign.start,
-                                            style: TextStyle(
-                                                color: yellow,
-                                                fontSize: 17,
+                                      SizedBox(
+                                        height: 15,
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 28.0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              state.kitchen.data.address ?? "",
+                                              style: TextStyle(
+                                                color: Colors.black,
                                                 fontFamily: 'tajwal',
-                                                fontWeight: FontWeight.w800),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 14.0),
-                                      child: Text(
-                                        state.kitchen.data.description ?? "",
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 19,
-                                          fontFamily: 'tajwal',
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                            Container(
+                                              width: 105,
+                                              child: Center(
+                                                  child: Row(
+                                                children: [
+                                                  state.kitchen.data.isOpen
+                                                      ? CircleAvatar(
+                                                          backgroundColor:
+                                                              Colors.green,
+                                                          radius: 6,
+                                                        )
+                                                      : CircleAvatar(
+                                                          backgroundColor:
+                                                              Colors.grey,
+                                                          radius: 6,
+                                                        ),
+                                                  SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  state.kitchen.data.isOpen
+                                                      ? Text(
+                                                          "المطبخ مفتوح",
+                                                          style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontFamily:
+                                                                'tajwal',
+                                                          ),
+                                                        )
+                                                      : Text(
+                                                          "المطبخ غير مفتوح",
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.grey,
+                                                              fontFamily:
+                                                                  'tajwal',
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w800),
+                                                        ),
+                                                ],
+                                              )),
+                                              height: 30,
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ));
-                        },
-                      ),
-                      pinned: true,
-                      backgroundColor: yellow,
-                      floating: false,
-                      actions: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 18.0),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 28.0),
+                                        child: Container(
+                                          width: _width,
+                                          height: _height * .05,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  RatingBar.builder(
+                                                    initialRating: double.parse(
+                                                        state.kitchen.reviews
+                                                            .total),
+                                                    minRating: 1,
+                                                    textDirection:
+                                                        TextDirection.ltr,
+                                                    direction: Axis.horizontal,
+                                                    allowHalfRating: true,
+                                                    itemCount: 5,
+                                                    itemSize: 20,
+                                                    updateOnDrag: false,
+                                                    ignoreGestures: true,
+                                                    glowColor: yellow,
+                                                    itemPadding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 4.0),
+                                                    itemBuilder: (context, _) =>
+                                                        Icon(
+                                                      Icons.star,
+                                                      color: yellow,
+                                                    ),
+                                                    onRatingUpdate: (rating) {
+                                                      print(rating);
+                                                    },
+                                                  ),
+                                                  Text(
+                                                    state.kitchen.reviews
+                                                            .total ??
+                                                        "",
+                                                    style: TextStyle(
+                                                      color: Colors.black,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                      '(${state.kitchen.reviews.count})')
+                                                ],
+                                              ),
+                                              InkWell(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                      context,
+                                                      PageTransition(
+                                                          child:
+                                                              MultiBlocProvider(
+                                                            providers: [
+                                                              BlocProvider<
+                                                                      KitchensBloc>(
+                                                                  create: (context) =>
+                                                                      KitchensBloc(
+                                                                          FetchAllKitchens())
+                                                                        ..add(
+                                                                          FetchSpecificKitchen(state
+                                                                              .kitchen
+                                                                              .data
+                                                                              .slug),
+                                                                        )),
+                                                              BlocProvider<
+                                                                  ReviewsblocBloc>(
+                                                                create: (context) => ReviewsblocBloc(
+                                                                    FetchAllKitchens())
+                                                                  ..add(FetchSpecificKitchenComments(state
+                                                                      .kitchen
+                                                                      .data
+                                                                      .id
+                                                                      .toString())),
+                                                              )
+                                                            ],
+                                                            child: RatingPage(),
+                                                          ),
+                                                          type:
+                                                              PageTransitionType
+                                                                  .rightToLeft));
+                                                },
+                                                child: Text(
+                                                  "التقييمات",
+                                                  style: TextStyle(
+                                                      color: yellow,
+                                                      decoration: TextDecoration
+                                                          .underline,
+                                                      fontFamily: 'tajwal',
+                                                      fontWeight:
+                                                          FontWeight.w800,
+                                                      fontSize: 18),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ));
+                          },
+                        ),
+                        pinned: true,
+                        backgroundColor: Colors.white,
+                        floating: false,
+                        actions: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 18.0),
+                            child: CircleAvatar(
+                                backgroundColor: Colors.black.withOpacity(.3),
+                                radius: 20,
+                                child: IconButton(
+                                  color: Colors.white,
+                                  icon: Icon(
+                                    Linecons.search,
+                                    color: Colors.white,
+                                  ),
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        CupertinoPageRoute(
+                                            builder: (ctx) => SearchPage()));
+                                  },
+                                )),
+                          )
+                        ],
+                        leading: Padding(
+                          padding: const EdgeInsets.only(right: 18.0),
                           child: CircleAvatar(
                               backgroundColor: Colors.black.withOpacity(.3),
-                              radius: 20,
+                              radius: 15,
                               child: IconButton(
                                 color: Colors.white,
                                 icon: Icon(
-                                  Linecons.search,
+                                  Icons.arrow_back,
                                   color: Colors.white,
                                 ),
                                 onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      CupertinoPageRoute(
-                                          builder: (ctx) => SearchPage()));
+                                  Navigator.pop(context);
                                 },
                               )),
-                        )
-                      ],
-                      leading: Padding(
-                        padding: const EdgeInsets.only(right: 18.0),
-                        child: CircleAvatar(
-                            backgroundColor: Colors.black.withOpacity(.3),
-                            radius: 15,
-                            child: IconButton(
-                              color: Colors.white,
-                              icon: Icon(
-                                Icons.arrow_back,
-                                color: Colors.white,
+                        ),
+                      )
+                    ];
+                  },
+                  body: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: BlocBuilder<MenuBloc, MenuState>(
+                      builder: (context, state) {
+                        if (state is MenuLoading) {
+                          return Container(
+                            height: _height * .2,
+                            width: _width,
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                valueColor:
+                                    AlwaysStoppedAnimation(Colors.black),
                               ),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                            )),
-                      ),
-                    )
-                  ];
-                },
-                body: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: BlocBuilder<MenuBloc, MenuState>(
-                    builder: (context, state) {
-                      if (state is MenuLoading) {
-                        return Container(
-                          height: _height * .2,
-                          width: _width,
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
-                      }
-
-                      if (state is MenuLoaded) {
-                        List<String> titles = [];
-                        for (int i = 0; i < state.categories.length; i++) {
-                          titles.add(state.categories[i].name);
+                            ),
+                          );
                         }
 
-                        return ScrollablePositionedList.builder(
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: state.categories.length,
-                          itemBuilder: (context, index) {
-                            return Container(
-                              child: Column(
-                                children: [
-                                  Divider(
-                                    color: Colors.grey,
-                                  ),
-                                  Align(
-                                    alignment: Alignment.centerRight,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(
-                                        state.categories[index].name ?? "",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontFamily: 'tajwal',
-                                            fontWeight: FontWeight.w800,
-                                            fontSize: 18),
+                        if (state is MenuLoaded) {
+                          List<String> titles = [];
+                          for (int i = 0; i < state.categories.length; i++) {
+                            titles.add(state.categories[i].name);
+                          }
+
+                          return ScrollConfiguration(
+                            behavior: MyBehavior(),
+                            child: ScrollablePositionedList.builder(
+                              itemCount: state.categories.length,
+                              itemBuilder: (context, index) {
+                                return Container(
+                                  child: Column(
+                                    children: [
+                                      Align(
+                                        alignment: Alignment.centerRight,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            state.categories[index].name ?? "",
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontFamily: 'tajwal',
+                                                fontWeight: FontWeight.w800,
+                                                fontSize: 18),
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                  Container(
-                                      child: ScrollConfiguration(
-                                    behavior: MyBehavior(),
-                                    child: ListView.builder(
-                                        shrinkWrap: true,
-                                        physics: NeverScrollableScrollPhysics(),
-                                        itemCount:
-                                            state.categories[index].data.length,
-                                        itemBuilder: (ctx, ind) {
-                                          return InkWell(
-                                            onTap: () {
-                                              state.categories[index].data[ind]
-                                                          .hasOptions ==
-                                                      0
-                                                  ? showMaterialModalBottomSheet(
-                                                      backgroundColor:
-                                                          Colors.transparent,
-                                                      enableDrag: true,
-                                                      isDismissible: false,
-                                                      context: context,
-                                                      builder: (ctx) {
-                                                        return BottomSheetContainer(
-                                                          data: state
+                                      Container(
+                                          child: ScrollConfiguration(
+                                        behavior: MyBehavior(),
+                                        child: ListView.builder(
+                                            shrinkWrap: true,
+                                            physics:
+                                                NeverScrollableScrollPhysics(),
+                                            itemCount: state
+                                                .categories[index].data.length,
+                                            itemBuilder: (ctx, ind) {
+                                              return InkWell(
+                                                onTap: () {
+                                                  state
                                                               .categories[index]
-                                                              .data[ind],
-                                                          height: _height,
-                                                          width: _width,
-                                                          address: address,
-                                                          ctx: ctx,
-                                                          resturantId:
-                                                              widget.id,
-                                                          resturantName:
-                                                              widget.name,
-                                                        );
-                                                      })
-                                                  : Navigator.push(
-                                                      context,
-                                                      PageTransition(
-                                                          child: MealDetailsScreen(
-                                                              address: address,
+                                                              .data[ind]
+                                                              .hasOptions ==
+                                                          0
+                                                      ? showMaterialModalBottomSheet(
+                                                          backgroundColor:
+                                                              Colors
+                                                                  .transparent,
+                                                          enableDrag: true,
+                                                          isDismissible: false,
+                                                          context: context,
+                                                          builder: (ctx) {
+                                                            return BottomSheetContainer(
                                                               data: state
                                                                   .categories[
                                                                       index]
                                                                   .data[ind],
                                                               height: _height,
                                                               width: _width,
+                                                              address: address,
+                                                              ctx: ctx,
                                                               resturantId:
                                                                   widget.id,
                                                               resturantName:
-                                                                  widget.name),
-                                                          type:
-                                                              PageTransitionType
+                                                                  widget.name,
+                                                            );
+                                                          })
+                                                      : Navigator.push(
+                                                          context,
+                                                          PageTransition(
+                                                              child: MealDetailsScreen(
+                                                                  address:
+                                                                      address,
+                                                                  data: state
+                                                                          .categories[
+                                                                              index]
+                                                                          .data[
+                                                                      ind],
+                                                                  height:
+                                                                      _height,
+                                                                  width: _width,
+                                                                  resturantId:
+                                                                      widget.id,
+                                                                  resturantName:
+                                                                      widget
+                                                                          .name),
+                                                              type: PageTransitionType
                                                                   .bottomToTop));
-                                            },
-                                            child: Container(
-                                              height: _height * .15,
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Column(
+                                                },
+                                                child: Container(
+                                                  height: _height * .15,
+                                                  child: Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment
-                                                            .center,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
+                                                            .spaceBetween,
                                                     children: [
-                                                      Text(
-                                                        state
-                                                                .categories[
-                                                                    index]
-                                                                .data[ind]
-                                                                .itemName ??
-                                                            "",
-                                                        style: TextStyle(
-                                                            color: Colors.black,
-                                                            fontFamily:
-                                                                'tajwal',
-                                                            fontSize: 16,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
+                                                      Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Text(
+                                                            state
+                                                                    .categories[
+                                                                        index]
+                                                                    .data[ind]
+                                                                    .itemName ??
+                                                                "",
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontFamily:
+                                                                    'tajwal',
+                                                                fontSize: 16,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          ),
+                                                          SizedBox(
+                                                            height: 20,
+                                                          ),
+                                                          state
+                                                                      .categories[
+                                                                          index]
+                                                                      .data[ind]
+                                                                      .hasOptions ==
+                                                                  0
+                                                              ? Text(state
+                                                                      .categories[
+                                                                          index]
+                                                                      .data[ind]
+                                                                      .price
+                                                                      .toString() +
+                                                                  "دأ")
+                                                              : Text(
+                                                                  "السعر حسب النوع")
+                                                        ],
                                                       ),
-                                                      SizedBox(
-                                                        height: 20,
-                                                      ),
-                                                      state
-                                                                  .categories[
-                                                                      index]
-                                                                  .data[ind]
-                                                                  .hasOptions ==
-                                                              0
-                                                          ? Text(state
-                                                                  .categories[
-                                                                      index]
-                                                                  .data[ind]
-                                                                  .price
-                                                                  .toString() +
-                                                              "دأ")
-                                                          : Text(
-                                                              "السعر حسب النوع")
+                                                      Container(
+                                                        height: _height * .11,
+                                                        child: ClipRRect(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(20),
+                                                          child:
+                                                              CachedNetworkImage(
+                                                            imageUrl:
+                                                                'https://images.pexels.com/photos/2613471/pexels-photo-2613471.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
+                                                          ),
+                                                        ),
+                                                      )
                                                     ],
                                                   ),
-                                                  Container(
-                                                    height: _height * .11,
-                                                    child: ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20),
-                                                      child: CachedNetworkImage(
-                                                        imageUrl:
-                                                            'https://images.pexels.com/photos/2613471/pexels-photo-2613471.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
-                                                      ),
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                          );
-                                        }),
-                                  ))
-                                ],
-                              ),
-                            );
-                          },
-                          itemScrollController: itemScrollController,
-                          itemPositionsListener: itemPositionsListener,
-                        );
-                      }
+                                                ),
+                                              );
+                                            }),
+                                      ))
+                                    ],
+                                  ),
+                                );
+                              },
+                              itemScrollController: itemScrollController,
+                              itemPositionsListener: itemPositionsListener,
+                            ),
+                          );
+                        }
 
-                      if (state is MenuError) {
-                        return Container(
-                          child: Center(
-                            child: Text("menu is not available"),
-                          ),
-                        );
-                      }
-                      return Container();
-                    },
+                        if (state is MenuError) {
+                          return Container(
+                            child: Center(
+                              child: Text("menu is not available"),
+                            ),
+                          );
+                        }
+                        return Container();
+                      },
+                    ),
                   ),
                 ),
               );

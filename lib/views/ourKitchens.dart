@@ -41,7 +41,8 @@ class _OurKitchensState extends State<OurKitchens> {
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2, childAspectRatio: 1 / 1.45),
                   itemBuilder: (BuildContext context, int index) {
-                    return kitchenCard(state.kitchens[index].id.toString(),
+                    return kitchenCard(
+                        state.kitchens[index].id.toString(),
                         MediaQuery.of(context).size.width,
                         state.kitchens[index].picturePath,
                         state.kitchens[index].name,

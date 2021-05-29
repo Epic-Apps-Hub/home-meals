@@ -9,6 +9,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:home_made/constants.dart';
 import 'package:home_made/models/cartItem.dart';
 import 'package:home_made/repositories/hive.dart';
+import 'package:home_made/views/addAdress.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 class OrdersScreen extends StatefulWidget {
@@ -734,13 +735,20 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                     onTap: () {
                                       Alert(
                                           context: context,
-                                          title: "ادخل كود الخصم",buttons: [
-                                            DialogButton(child: Text("تم",style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 18
-                                            ),), onPressed: (){
-                                              Navigator.pop(context);
-                                            },color: yellow,)
+                                          title: "ادخل كود الخصم",
+                                          buttons: [
+                                            DialogButton(
+                                              child: Text(
+                                                "تم",
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 18),
+                                              ),
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                              color: yellow,
+                                            )
                                           ],
                                           content: Center(
                                             child: TextField(),
@@ -798,18 +806,18 @@ class _OrdersScreenState extends State<OrdersScreen> {
                     ),
                     Padding(
                       padding: EdgeInsets.only(left: 0),
-                      child: InkWell(
-                        onTap: () {
-                          HiveRepo().deleteCartItems();
-                          setState(() {});
-                        },
-                        child: Container(
-                          height: _height * .08,
-                          width: _width,
-                          child: Center(
-                            child: Row(
-                              children: [
-                                Container(
+                      child: Container(
+                        height: _height * .08,
+                        width: _width,
+                        child: Center(
+                          child: Row(
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  HiveRepo().deleteCartItems();
+                                  setState(() {});
+                                },
+                                child: Container(
                                   width: _width * .4,
                                   color: Color(0xff333333),
                                   child: Center(
@@ -832,7 +840,12 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                     ),
                                   ),
                                 ),
-                                Container(
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  Navigator.push(context, MaterialPageRoute(builder: (ctx)=>AddAddress()));
+                                },
+                                child: Container(
                                   width: _width * .6,
                                   color: Color(0xffd29760),
                                   child: Center(
@@ -845,9 +858,9 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                           fontSize: 18),
                                     ),
                                   ),
-                                )
-                              ],
-                            ),
+                                ),
+                              )
+                            ],
                           ),
                         ),
                       ),

@@ -3,6 +3,7 @@ import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:home_made/blocs/kitchens/kitchens_bloc.dart';
 import 'package:home_made/blocs/menu/menu_bloc.dart';
@@ -27,9 +28,13 @@ Widget kitchenCard(
   return Center(
     child: InkWell(
       onTap: () {
-        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
             statusBarColor: Colors.transparent,
-            statusBarBrightness: Brightness.light));
+            statusBarBrightness: Brightness.dark));
+            EasyLoading.show(
+              
+            );
+
         Navigator.push(
             context,
             PageTransition(

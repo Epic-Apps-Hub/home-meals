@@ -11,15 +11,16 @@ import '../offers.dart';
 
 Widget drawer(double fullWidth, double fullHeight, BuildContext context) {
   return Container(
-    color: yellow,
-    width: fullWidth * .6,
+    color: Colors.white,
+    width: fullWidth * .8,
     child: Center(
       child: Column(
         children: [
           SizedBox(
-            height: fullHeight * .06,
+            height: fullHeight * .1,
           ),
-          InkWell(
+
+          /*    InkWell(
             onTap: () {
               Navigator.push(
                   context,
@@ -35,7 +36,7 @@ Widget drawer(double fullWidth, double fullHeight, BuildContext context) {
                 child: Text(
                   "عروضنا",
                   style: TextStyle(
-                      color: Colors.white,
+                      color: Colors.black,
                       fontFamily: 'tajwal',
                       fontSize: 26,
                       fontWeight: FontWeight.w900),
@@ -43,6 +44,7 @@ Widget drawer(double fullWidth, double fullHeight, BuildContext context) {
               ),
             ),
           ),
+        */
           SizedBox(
             height: fullHeight * .06,
           ),

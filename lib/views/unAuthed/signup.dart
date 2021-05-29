@@ -213,8 +213,12 @@ class _SignupState extends State<Signup> {
                           color: Colors.transparent,
                           child: InkWell(
                             hoverColor: Colors.white,
-                            onTap: () {                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (ctx)=>HomePage()));
-},
+                            onTap: () {
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (ctx) => HomePage()));
+                            },
                             child: Center(
                               child: Text(
                                 'تسجيل حساب جديد',

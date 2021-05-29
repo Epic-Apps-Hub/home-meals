@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:home_made/models/rating.dart';
 import 'package:home_made/repositories/kitchensRepo.dart';
 
@@ -16,9 +17,11 @@ class ReviewsblocBloc extends Bloc<ReviewsblocEvent, ReviewsblocState> {
   Stream<ReviewsblocState> mapEventToState(
     ReviewsblocEvent event,
   ) async* {
-      if (event is FetchSpecificKitchenComments) {
-        yield ReviewsLoading();
+    if (event is FetchSpecificKitchenComments) {
+      EasyLoading.show();
       Rating rating = await kitechensRepo.getSpecificKitchenRating(event.id);
+      EasyLoading.dismiss();
+
       if (rating == null) {
         yield ReviewsFailed();
       } else {

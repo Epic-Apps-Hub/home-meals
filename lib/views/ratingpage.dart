@@ -24,10 +24,11 @@ class _RatingPageState extends State<RatingPage> {
         iconTheme: IconThemeData(color: Colors.black),
         centerTitle: true,
         title: Text(
-          "التقييمات",
+          "التقييمات والمراجعات",
           style: TextStyle(
-            color: yellow,
-            decoration: TextDecoration.underline,
+            color: Colors.black
+            //    decoration: TextDecoration.underline,
+            ,
             fontFamily: 'tajwal',
             fontWeight: FontWeight.w800,
           ),
@@ -43,132 +44,195 @@ class _RatingPageState extends State<RatingPage> {
                   child: ListView(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 14.0),
+                        padding: const EdgeInsets.only(top: 20, bottom: 11),
                         child: Container(
-                          height: _height * .1,
+                          //       height: _height * .2,
                           width: _width,
-                          color: Colors.white,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Column(
-                                children: [
-                                  Center(
-                                    child: Text(
-                                      (statee.kitchen.reviews.total),
-                                      style: TextStyle(
-                                          color: yellow,
-                                          fontFamily: 'tajwal',
-                                          fontSize: 30,
-                                          fontWeight: FontWeight.w900),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  RatingBar.builder(
-                                    initialRating: double.parse(
-                                        statee.kitchen.reviews.total),
-                                    minRating: 1,
-                                    textDirection: TextDirection.ltr,
-                                    direction: Axis.horizontal,
-                                    allowHalfRating: true,
-                                    itemCount: 5,
-                                    itemSize: 20,
-                                    updateOnDrag: false,
-                                    ignoreGestures: true,
-                                    glowColor: yellow,
-                                    itemPadding:
-                                        EdgeInsets.symmetric(horizontal: 4.0),
-                                    itemBuilder: (context, _) => Icon(
-                                      Icons.star,
-                                      color: yellow,
-                                    ),
-                                    onRatingUpdate: (rating) {
-                                      print(rating);
-                                    },
-                                  )
-                                ],
+                              RatingBar.builder(
+                                initialRating:
+                                    double.parse(statee.kitchen.reviews.total),
+                                minRating: 1,
+                                textDirection: TextDirection.ltr,
+                                direction: Axis.horizontal,
+                                allowHalfRating: true,
+                                itemCount: 5,
+                                itemSize: 25,
+                                updateOnDrag: false,
+                                ignoreGestures: true,
+                                glowColor: yellow,
+                                itemPadding:
+                                    EdgeInsets.symmetric(horizontal: 4.0),
+                                itemBuilder: (context, _) => Icon(
+                                  Icons.star,
+                                  color: yellow,
+                                ),
+                                onRatingUpdate: (rating) {
+                                  print(rating);
+                                },
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Center(
+                                child: Text(
+                                  (statee.kitchen.reviews.total),
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      //  fontFamily: 'tajwal',
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w900),
+                                ),
                               ),
                             ],
                           ),
                         ),
                       ),
                       Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "جودة الطعام",
-                                  style: TextStyle(fontFamily: 'tajwal'),
-                                ),
-                                IgnorePointer(
-                                    child: Container(
-                                  width: _width * .4,
-                                  child: Slider(
-                                    activeColor: yellow,
-                                    value: double.parse(
-                                        statee.kitchen.reviews.foodQuality),
-                                    onChanged: (c) {},
-                                    min: 0,
-                                    max: 5,
-                                    inactiveColor: Colors.grey.withOpacity(.6),
-                                  ),
-                                )),
-                                Text(statee.kitchen.reviews.foodQuality)
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "    التوصيل",
-                                  style: TextStyle(fontFamily: 'tajwal'),
-                                ),
-                                IgnorePointer(
-                                    child: Container(
-                                  width: _width * .4,
-                                  child: Slider(
-                                    activeColor: yellow,
-                                    value: double.parse(
-                                        statee.kitchen.reviews.delivery),
-                                    onChanged: (c) {},
-                                    min: 0,
-                                    max: 5,
-                                    inactiveColor: Colors.grey.withOpacity(.6),
-                                  ),
-                                )),
-                                Text(statee.kitchen.reviews.delivery)
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "     الخدمة",
-                                  style: TextStyle(fontFamily: 'tajwal'),
-                                ),
-                                IgnorePointer(
-                                    child: Container(
-                                  width: _width * .4,
-                                  child: Slider(
-                                    activeColor: yellow,
-                                    value: double.parse(
-                                        statee.kitchen.reviews.service),
-                                    onChanged: (c) {},
-                                    min: 0,
-                                    max: 5,
-                                    inactiveColor: Colors.grey.withOpacity(.6),
-                                  ),
-                                )),
-                                Text(statee.kitchen.reviews.service)
-                              ],
-                            ),
-                          ],
+                        child: Text(
+                          "استنادا الي ${statee.kitchen.reviews.count} تقييم",
+                          style: TextStyle(
+                              color: Colors.grey,
+                              fontFamily: 'tajwal',
+                              fontSize: 16),
                         ),
+                      ),
+                      SizedBox(
+                        height: 40,
+                      ),
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical:8.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "جودة الطعام",
+                                      style: TextStyle(fontFamily: 'tajwal'),
+                                    ),
+                                    Row(
+                                      children: [
+                                        RatingBar.builder(
+                                          initialRating: double.parse(
+                                              statee.kitchen.reviews.foodQuality),
+                                          minRating: 1,
+                                          textDirection: TextDirection.rtl,
+                                          direction: Axis.horizontal,
+                                          allowHalfRating: true,
+                                          itemCount: 5,
+                                          itemSize: 17,
+                                          updateOnDrag: false,
+                                          ignoreGestures: true,
+                                          glowColor: yellow,
+                                          itemPadding: EdgeInsets.symmetric(
+                                              horizontal: 4.0),
+                                          itemBuilder: (context, _) => Icon(
+                                            Icons.star,
+                                            color: yellow,
+                                          ),
+                                          onRatingUpdate: (rating) {
+                                            print(rating);
+                                          },
+                                        ),
+                                        Text(statee.kitchen.reviews.foodQuality),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical:8.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "التوصيل",
+                                      style: TextStyle(fontFamily: 'tajwal'),
+                                    ),
+                                    Row(
+                                      children: [
+                                        RatingBar.builder(
+                                          initialRating: double.parse(
+                                              statee.kitchen.reviews.delivery),
+                                          minRating: 1,
+                                          textDirection: TextDirection.rtl,
+                                          direction: Axis.horizontal,
+                                          allowHalfRating: true,
+                                          itemCount: 5,
+                                          itemSize: 17,
+                                          updateOnDrag: false,
+                                          ignoreGestures: true,
+                                          glowColor: yellow,
+                                          itemPadding: EdgeInsets.symmetric(
+                                              horizontal: 4.0),
+                                          itemBuilder: (context, _) => Icon(
+                                            Icons.star,
+                                            color: yellow,
+                                          ),
+                                          onRatingUpdate: (rating) {
+                                            print(rating);
+                                          },
+                                        ),
+                                        Text(statee.kitchen.reviews.delivery),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical:8.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "الخدمة",
+                                      style: TextStyle(fontFamily: 'tajwal'),
+                                    ),
+                                    Row(
+                                      children: [
+                                        RatingBar.builder(
+                                          initialRating: double.parse(
+                                              statee.kitchen.reviews.service),
+                                          minRating: 1,
+                                          textDirection: TextDirection.rtl,
+                                          direction: Axis.horizontal,
+                                          allowHalfRating: true,
+                                          itemCount: 5,
+                                          itemSize: 17,
+                                          updateOnDrag: false,
+                                          ignoreGestures: true,
+                                          glowColor: yellow,
+                                          itemPadding: EdgeInsets.symmetric(
+                                              horizontal: 4.0),
+                                          itemBuilder: (context, _) => Icon(
+                                            Icons.star,
+                                            color: yellow,
+                                          ),
+                                          onRatingUpdate: (rating) {
+                                            print(rating);
+                                          },
+                                        ),
+                                        Text(statee.kitchen.reviews.service),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),SizedBox(
+                        height: 30,
                       ),
                       ListView.builder(
                           shrinkWrap: true,
