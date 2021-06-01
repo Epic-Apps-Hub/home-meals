@@ -9,8 +9,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive/hive.dart';
 import 'package:home_made/blocs/blocObserver.dart';
+import 'package:home_made/blocs/category/bloc/category_bloc.dart';
+import 'package:home_made/blocs/dessert/dessert_bloc.dart';
+import 'package:home_made/blocs/discount/discount_bloc.dart';
 import 'package:home_made/blocs/kitchens/kitchens_bloc.dart';
 import 'package:home_made/blocs/language/language_bloc.dart';
+import 'package:home_made/blocs/near/near_bloc.dart';
+import 'package:home_made/blocs/popular/popular_bloc.dart';
 import 'package:home_made/localization/APP_LOCAL.dart';
 import 'package:home_made/localization/sharedPrefs.dart';
 import 'package:home_made/models/cartItem.dart';
@@ -87,11 +92,36 @@ class _MyAppState extends State<MyApp> {
             Locale('en', 'US'),
             Locale('ar', 'AR'),
           ],
-          home: Hive.box("name").get("onBoard")
+          home:
+              /* Hive.box("name").get("onBoard")
               ? OnBoarding()
-              : BlocProvider(
+              :*/
+              MultiBlocProvider(
+                  providers: [
+                    BlocProvider(create: (ctx)=>DessertBloc(FetchAllKitchens())..add(
+                      FetchDessert()
+                    )),
+                    BlocProvider(create: (ctx)=>DiscountBloc(
+                      FetchAllKitchens()
+                    )..add(FetchDiscounts())),
+                    BlocProvider(create: 
+                    (ctx)=>NearBloc(
+                      FetchAllKitchens()
+                    )..add(
+                     NearFetch()
+                    )),
+                BlocProvider(
+                    create: (ctx) =>
+                        PopularBloc(FetchAllKitchens())..add(FetchPopular())),
+                BlocProvider<CategoryBloc>(
+                  create: (ctx) =>
+                      CategoryBloc(FetchAllKitchens())..add(FetchCategories()),
+                ),
+                BlocProvider(
                   create: (context) =>
                       KitchensBloc(FetchAllKitchens())..add(FetchKitchens()),
+                )
+              ],
                   child: DoubleBack(
                       message: "Press back again to close", child: HomePage())),
         );

@@ -54,7 +54,7 @@ class _DetailsScreenState extends State<DetailsScreen>
   TabController tabController;
 
   Box priceAndQuantityBox;
-  int ind = 3000;
+  int ind = 0;
 
   @override
   void initState() {
@@ -161,6 +161,7 @@ class _DetailsScreenState extends State<DetailsScreen>
                 behavior: MyBehavior(),
                 child: NestedScrollView(
                   controller: scrollController,
+                  floatHeaderSlivers: true,
                   headerSliverBuilder: (ctx, d) {
                     return [
                       SliverAppBar(
@@ -168,7 +169,7 @@ class _DetailsScreenState extends State<DetailsScreen>
                         bottom: PreferredSize(
                           preferredSize: Size.fromHeight(50),
                           child: Container(
-                            height: 40,
+                            height: 30,
                             width: _width,
                             child: BlocBuilder<MenuBloc, MenuState>(
                               builder: (context, state) {
@@ -179,17 +180,23 @@ class _DetailsScreenState extends State<DetailsScreen>
                                       i++) {
                                     titles.add(state.categories[i].name);
                                   }
-                                  print(titles);
+
                                   return Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 8.0),
                                     child: ScrollConfiguration(
                                       behavior: MyBehavior(),
                                       child: ListView.builder(
-                                        itemCount: titles.length,
+                                        itemCount: titles.length + 1,
                                         scrollDirection: Axis.horizontal,
                                         itemBuilder:
                                             (BuildContext context, int index) {
+                                          if (index == 0) {
+                                            return Icon(
+                                              Icons.menu,
+                                              color: Colors.orange,
+                                            );
+                                          }
                                           return InkWell(
                                             onTap: () {
                                               scrollController.animateTo(430,
@@ -197,29 +204,28 @@ class _DetailsScreenState extends State<DetailsScreen>
                                                       milliseconds: 400),
                                                   curve: Curves.ease);
                                               setState(() {
-                                                ind = index;
+                                                ind = index - 1;
                                               });
                                               itemScrollController.jumpTo(
-                                                  index: index,
-                                                );
+                                                index: index - 1,
+                                              );
                                             },
                                             child: Container(
                                               height: 40,
                                               width: 80,
                                               child: Column(
                                                 children: [
-                                                  Text(titles[index] ?? "",
+                                                  Text(titles[index - 1] ?? "",
                                                       style: TextStyle(
                                                         color: Colors.black,
                                                         fontSize: 17,
                                                         fontFamily: 'tajwal',
                                                       )),
-                                                  ind == index
+                                                  ind == index - 1
                                                       ? Container(
-                                                          height: 3,
+                                                          height: 2,
                                                           width: 40,
-                                                          color: mainColor,
-                                                        )
+                                                          color: Colors.orange)
                                                       : Container()
                                                 ],
                                               ),

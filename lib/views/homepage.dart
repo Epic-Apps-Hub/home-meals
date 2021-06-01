@@ -1,4 +1,5 @@
-import 'package:animate_do/animate_do.dart';
+import 'dart:async';
+
 import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,7 +9,12 @@ import 'package:fluttericon/entypo_icons.dart';
 import 'package:fluttericon/mfg_labs_icons.dart';
 import 'package:fluttericon/typicons_icons.dart';
 import 'package:hive/hive.dart';
+import 'package:home_made/blocs/category/bloc/category_bloc.dart';
+import 'package:home_made/blocs/dessert/dessert_bloc.dart';
+import 'package:home_made/blocs/discount/discount_bloc.dart';
 import 'package:home_made/blocs/kitchens/kitchens_bloc.dart';
+import 'package:home_made/blocs/near/near_bloc.dart';
+import 'package:home_made/blocs/popular/popular_bloc.dart';
 import 'package:home_made/constants.dart';
 import 'package:home_made/repositories/kitchensRepo.dart';
 import 'package:home_made/views/meals.dart';
@@ -16,6 +22,7 @@ import 'package:home_made/views/offers.dart';
 import 'package:home_made/views/orderScreen.dart';
 import 'package:home_made/views/ourKitchens.dart';
 import 'package:home_made/views/searchPage.dart';
+import 'package:home_made/views/widgets/KitchenNarrow.dart';
 import 'package:home_made/views/widgets/drawer.dart';
 import 'package:home_made/views/widgets/kitchen.dart';
 import 'package:home_made/views/widgets/mealOffer.dart';
@@ -33,9 +40,10 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     Hive.openBox("orderItems");
-
     super.initState();
   }
+
+  bool selected = false;
 
   Widget buildListTile(String name, IconData icon, Function tab) {
     return Padding(
@@ -97,15 +105,15 @@ class _HomePageState extends State<HomePage> {
               SizedBox(
                 height: 20,
               ),
-              buildListTile("الملف الشخصي",Typicons.user, () {}),
+              buildListTile("الملف الشخصي", Typicons.user, () {}),
               buildListTile("طلباتي", Icons.backpack, () {}),
               buildListTile("الاعدادات", Typicons.cog_outline, () {}),
               buildListTile("عن التطبيق", Icons.info, () {}),
-              buildListTile("سياسة الخصوصية",Entypo.newspaper, () {}),
+              buildListTile("سياسة الخصوصية", Entypo.newspaper, () {}),
               buildListTile("مشاركة التطبيق", Elusive.share, () {}),
               buildListTile("تقييم التطبيق", Icons.rate_review, () {}),
-              buildListTile("تسجيل الخروج",Entypo.logout, () {}),
-            /*  Padding(
+              buildListTile("تسجيل الخروج", Entypo.logout, () {}),
+              /*  Padding(
                 padding: const EdgeInsets.only(left:55.0,top: 40),
                 child: Image(
                   image: AssetImage("assets/images/transparent.png"),  height: height*.12,
@@ -123,7 +131,8 @@ class _HomePageState extends State<HomePage> {
     final _height = MediaQuery.of(context).size.height;
     return Material(
       child: ZoomDrawer(
-        clipMainScreen: true,disableGesture: true,
+        clipMainScreen: true,
+        disableGesture: true,
         showShadow: true,
         style: DrawerStyle.Style1,
         angle: 0,
@@ -134,169 +143,76 @@ class _HomePageState extends State<HomePage> {
         isRtl: true,
         mainScreen: Scaffold(
           appBar: AppBar(
+            elevation: .8,
             centerTitle: true,
-            backgroundColor: yellow,
-            title: FadeInDownBig(
-              child: Text(
-                "الرئيسية",
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 26,
-                    fontFamily: 'tajwal',
-                    fontWeight: FontWeight.w900),
-              ),
+            backgroundColor: Colors.white,
+            title: Text(
+              "الرئيسية",
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 26,
+                  fontFamily: 'tajwal',
+                  fontWeight: FontWeight.w900),
             ),
             actions: [
-              FadeInRight(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    child: IconButton(
-                        hoverColor: Colors.white,
-                        icon: Icon(
-                          Typicons.basket,
-                          color: Colors.black,
-                        ),
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              PageTransition(
-                                  child: OrdersScreen(),
-                                  type: PageTransitionType.fade));
-                        }),
-                  ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  child: IconButton(
+                      hoverColor: Colors.white,
+                      icon: Icon(
+                        Typicons.basket,
+                        color: Colors.black,
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            PageTransition(
+                                child: OrdersScreen(),
+                                type: PageTransitionType.fade));
+                      }),
                 ),
               )
             ],
-            leading: FadeInLeft(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: IconButton(
-                  icon: Icon(
-                    MfgLabs.menu,
-                    color: Colors.black,
-                    size: 30,
-                  ),
-                  onPressed: () {
-                    zoomDrawerController.toggle.call();
-                  },
+            leading: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: IconButton(
+                icon: Icon(
+                  MfgLabs.menu,
+                  color: Colors.black,
+                  size: 30,
                 ),
+                onPressed: () {
+                  zoomDrawerController.toggle.call();
+                },
               ),
             ),
           ),
           key: scaffoldKey,
-   //drawer: drawer(_width, _height, context),
+          //drawer: drawer(_width, _height, context),
           body: Container(
             child: ListView(
               children: [
-                FadeInDownBig(
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          PageTransition(
-                              type: PageTransitionType.scale,
-                              alignment: Alignment.topCenter,
-                              child: SearchPage()));
-                    },
-                    child: Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                      child: Container(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                "ابحث عن الاكلات",
-                                style: TextStyle(
-                                    color: Colors.grey.withOpacity(.7),
-                                    fontFamily: 'tajwal',
-                                    fontWeight: FontWeight.w800,
-                                    fontSize: 18),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Container(
-                                width: 80,
-                                height: 55,
-                                decoration: BoxDecoration(
-                                  color: yellow,
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    "بحث",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontFamily: 'tajwal',
-                                      fontSize: 22,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        width: _width,
-                        height: 60,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Colors.white,
-                            boxShadow: [
-                              BoxShadow(
-                                  offset: Offset(.5, 1),
-                                  blurRadius: 2,
-                                  color: Colors.grey.withOpacity(.2),
-                                  spreadRadius: 2),
-                              BoxShadow(
-                                  blurRadius: .5,
-                                  color: Colors.grey.withOpacity(.5),
-                                  spreadRadius: .1)
-                            ]),
-                      ),
-                    ),
-                  ),
+                SizedBox(
+                  height: 40,
                 ),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 10,
-                  ),
-                  child: Text(
-                    "هل تريد: مكبوس, برجر, حلويات, بيتزا, كشري",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontFamily: 'tajwal',
-                        fontWeight: FontWeight.w900),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Container(
-                    height: _height * .35,
-                    width: _width,
-                    // color: Colors.blue,
-                    child: Center(
-                      child: Column(
+                Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 18.0, vertical: 3),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 18.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "عن ماذا تبحث؟",
-                                  style: TextStyle(
-                                      color: mainColor,
-                                      fontFamily: 'tajwal',
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                InkWell(
+                          Text(
+                            "عن ماذا تبحث؟",
+                            style: TextStyle(
+                                color: mainColor,
+                                fontFamily: 'tajwal',
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          /*       InkWell(
                                   onTap: () {
                                     Navigator.push(
                                         context,
@@ -323,154 +239,174 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                   ),
                                 ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Container(
-                            width: _width,
-                            height: _height * .3 - 30,
-                            child: ListView(
-                              scrollDirection: Axis.horizontal,
-                              children: [
-                                mealCard(
-                                    _width,
-                                    "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-                                    "كشري",
-                                    "باسعار تبدا من 20 دا"),
-                                mealCard(
-                                    _width,
-                                    "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-                                    "كشري",
-                                    "باسعار تبدا من 20 دا"),
-                                mealCard(
-                                    _width,
-                                    "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-                                    "كشري",
-                                    "باسعار تبدا من 20 دا"),
-                                mealCard(
-                                    _width,
-                                    "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-                                    "كشري",
-                                    "باسعار تبدا من 20 دا")
-                              ],
-                            ),
-                          )
+                         */
                         ],
                       ),
                     ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Container(
-                    height: _height * .36,
-                    width: _width,
-                    // color: Colors.blue,
-                    child: Center(
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 18.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "العروض",
-                                  style: TextStyle(
-                                      color: mainColor,
-                                      fontFamily: 'tajwal',
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        PageTransition(
-                                            child: Offers(),
-                                            type:
-                                                PageTransitionType.rightToLeft,
-                                            ctx: context));
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(5),
-                                        border: Border.all(color: yellow)),
-                                    height: 20,
-                                    width: 70,
-                                    child: Center(
-                                      child: Text(
-                                        "عرض الكل",
-                                        style: TextStyle(
-                                            fontFamily: 'tajwal',
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black),
+                    Container(
+                      width: _width,
+                      height: _height * .2,
+                      child: BlocBuilder<CategoryBloc, CategoryState>(
+                        builder: (context, state) {
+                          if (state is CategoryLoading) {
+                            return SizedBox(
+                              width: _width,
+                              child: Shimmer.fromColors(
+                                period: Duration(milliseconds: 500),
+                                baseColor: Colors.orange.withOpacity(.3),
+                                highlightColor: Colors.orange.withOpacity(.6),
+                                child: ListView(
+                                  scrollDirection: Axis.horizontal,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 20),
+                                      child: Container(
+                                        height: 150,
+                                        width: 170,
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(18),
+                                            color: Colors.white),
                                       ),
                                     ),
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 20),
+                                      child: Container(
+                                        height: 150,
+                                        width: 170,
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(18),
+                                            color: Colors.white),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 20),
+                                      child: Container(
+                                        height: 150,
+                                        width: 170,
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(18),
+                                            color: Colors.white),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          } else if (state is CategoryLoaded) {
+                            return ListView.builder(
+                              itemBuilder: (ctx, ind) {
+                                return mealCard(
+                                    _width,
+                                    "https://images.pexels.com/photos/1624487/pexels-photo-1624487.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+                                    state.category.data[ind].categoryName);
+                              },
+                              itemCount: state.category.data.length,
+                              scrollDirection: Axis.horizontal,
+                            );
+                          } else if (state is CategoryLoadFailed) {
+                            return Center(
+                              child: Text("an error occured, sorry"),
+                            );
+                          }
+                          return Container();
+                        },
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                BlocConsumer<NearBloc, NearState>(
+                  listener: (context, state) {
+                    if (state is NearLoaded) {
+                      Timer(Duration(milliseconds: 200), () {
+                        setState(() {
+                          selected = true;
+                        });
+                      });
+                    }
+                  },
+                  builder: (context, state) {
+                    if (state is NearEmpty) {
+                      return Container();
+                    } else if (state is NearLoaded) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: AnimatedContainer(
+                          duration: Duration(milliseconds: 300),
+                          curve: Curves.linear,
+                          //      height: _height * .367,
+                          width: selected ? _width : 0,
+                          height: selected ? 315 : 0,
+                          // color: Colors.blue,
+                          child: Center(
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 18.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "بالقرب منك",
+                                        style: TextStyle(
+                                            color: mainColor,
+                                            fontFamily: 'tajwal',
+                                            fontSize: 22,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
                                   ),
                                 ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Container(
+                                  //     color: Colors.red,
+                                  width: _width,
+                                  height: _height * .33,
+                                  child: ListView.builder(
+                                    itemCount: state.kitchens.length,
+                                    scrollDirection: Axis.horizontal,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return kitchenCard(
+                                        state.kitchens[index].id.toString(),
+                                        _width,
+                                        state.kitchens[index].picturePath,
+                                        state.kitchens[index].name,
+                                        state.kitchens[index].discount
+                                            .toString(),
+                                        state.kitchens[index].averageRating,
+                                        state.kitchens[index].address,
+                                        context,
+                                        state.kitchens[index].slug,
+                                        state.kitchens[index].slug,
+                                      );
+                                    },
+                                  ),
+                                )
                               ],
                             ),
                           ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Container(
-                            width: _width,
-                            height: _height * .31 - 5,
-                            child: ListView(
-                              scrollDirection: Axis.horizontal,
-                              children: [
-                                mealOfferCard(
-                                    _width,
-                                    "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-                                    "كشري",
-                                    "خصم15%",
-                                    3.5,
-                                    "ابو ظبي",
-                                    "ماكولات الشرق"
-                                        "باسعار تبدا من 20 دا"),
-                                mealOfferCard(
-                                    _width,
-                                    "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-                                    "كشري",
-                                    "خصم15%",
-                                    3.5,
-                                    "ابو ظبي",
-                                    "ماكولات الشرق"
-                                        "باسعار تبدا من 20 دا"),
-                                mealOfferCard(
-                                    _width,
-                                    "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-                                    "كشري",
-                                    "خصم15%",
-                                    3.5,
-                                    "ابو ظبي",
-                                    "ماكولات الشرق"
-                                        "باسعار تبدا من 20 دا"),
-                                mealOfferCard(
-                                    _width,
-                                    "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-                                    "كشري",
-                                    "خصم15%",
-                                    3.5,
-                                    "ابو ظبي",
-                                    "ماكولات الشرق"
-                                        "باسعار تبدا من 20 دا"),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
+                        ),
+                      );
+                    }
+                    return Container();
+                  },
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(vertical: 0.0),
                   child: Container(
                     //      height: _height * .367,
                     width: _width,
@@ -485,44 +421,125 @@ class _HomePageState extends State<HomePage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  "افضل المطابخ",
+                                  "الاكثر شيوعا",
                                   style: TextStyle(
                                       color: mainColor,
                                       fontFamily: 'tajwal',
                                       fontSize: 22,
                                       fontWeight: FontWeight.bold),
                                 ),
-                                InkWell(
-                                  onTap: () {
-                                    Navigator.push(
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          BlocBuilder<PopularBloc, PopularState>(
+                            builder: (context, state) {
+                              if (state is PopularLoaded) {
+                                return Container(
+                                  //     color: Colors.red,
+                                  width: _width,
+                                  height: _height * .33,
+                                  child: ListView.builder(
+                                    itemCount: state.kitchens.length,
+                                    scrollDirection: Axis.horizontal,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return kitchenCard(
+                                        state.kitchens[index].id.toString(),
+                                        _width,
+                                        state.kitchens[index].picturePath,
+                                        state.kitchens[index].name,
+                                        state.kitchens[index].discount
+                                            .toString(),
+                                        state.kitchens[index].averageRating,
+                                        state.kitchens[index].address,
                                         context,
-                                        PageTransition(
-                                            child: BlocProvider(
-                                              create: (context) => KitchensBloc(
-                                                  FetchAllKitchens())
-                                                ..add(FetchKitchens()),
-                                              child: OurKitchens(),
-                                            ),
-                                            type:
-                                                PageTransitionType.rightToLeft,
-                                            ctx: context));
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(5),
-                                        border: Border.all(color: yellow)),
-                                    height: 20,
-                                    width: 70,
-                                    child: Center(
-                                      child: Text(
-                                        "عرض الكل",
-                                        style: TextStyle(
-                                            fontFamily: 'tajwal',
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black),
-                                      ),
+                                        state.kitchens[index].slug,
+                                        state.kitchens[index].slug,
+                                      );
+                                    },
+                                  ),
+                                );
+                              } else if (state is PopularLoading) {
+                                return SizedBox(
+                                  width: _width,
+                                  height: _height * .23,
+                                  child: Shimmer.fromColors(
+                                    period: Duration(milliseconds: 500),
+                                    baseColor: Colors.orange.withOpacity(.3),
+                                    highlightColor:
+                                        Colors.orange.withOpacity(.6),
+                                    child: ListView(
+                                      scrollDirection: Axis.horizontal,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              right: 16.0, bottom: 20),
+                                          child: Container(
+                                            height: _height * .7,
+                                            width: 300,
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(18),
+                                                color: Colors.white),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              right: 16.0, bottom: 20),
+                                          child: Container(
+                                            height: _height * .9,
+                                            width: 300,
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(18),
+                                                color: Colors.white),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
+                                );
+                              } else if (state is PopularFailed) {
+                                return Center(
+                                  child: Text("fetch failed"),
+                                );
+                              } else if (state is PopularEmpty) {
+                                return Container();
+                              }
+                              return Container();
+                            },
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 2.0),
+                  child: Container(
+                    //      height: _height * .367,
+                    width: _width,
+                    // color: Colors.blue,
+                    child: Center(
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 18.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "جديد",
+                                  style: TextStyle(
+                                      color: mainColor,
+                                      fontFamily: 'tajwal',
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ],
                             ),
@@ -559,40 +576,44 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                 );
                               } else if (state is KitchensLoading) {
-                                return Container(
+                                return SizedBox(
                                   width: _width,
-                                  height: _height * .32,
-                                  child: Shimmer(
-                                    enabled: true,
-                                    child: ListView.builder(
-                                        scrollDirection: Axis.horizontal,
-                                        itemBuilder: (ctx, index) {
-                                          return Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Container(
-                                              height: 263,
-                                              child: Center(
-                                                  child: Column(
-                                                children: [
-                                                  Container(
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              18),
-                                                    ),
-                                                    width: 180,
-                                                    height: 160,
-                                                  ),
-                                                ],
-                                              )),
-                                              width: 150,
-                                            ),
-                                          );
-                                        }),
-                                    period: Duration(seconds: 1),
-                                    gradient: LinearGradient(
-                                        colors: [Colors.white, Colors.grey]),
-                                    //   period: Duration(milliseconds: 300),
+                                  height: _height * .23,
+                                  child: Shimmer.fromColors(
+                                    period: Duration(milliseconds: 500),
+                                    baseColor: Colors.orange.withOpacity(.3),
+                                    highlightColor:
+                                        Colors.orange.withOpacity(.6),
+                                    child: ListView(
+                                      scrollDirection: Axis.horizontal,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              right: 16.0, bottom: 20),
+                                          child: Container(
+                                            height: _height * .9,
+                                            width: 300,
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(18),
+                                                color: Colors.white),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              right: 16.0, bottom: 20),
+                                          child: Container(
+                                            height: _height * .9,
+                                            width: 300,
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(18),
+                                                color: Colors.white),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 );
                               } else if (state is KitchenLoadFailed) {
@@ -606,6 +627,244 @@ class _HomePageState extends State<HomePage> {
                         ],
                       ),
                     ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 2.0),
+                  child: Container(
+                    //      height: _height * .367,
+                    width: _width,
+                    // color: Colors.blue,
+                    child: Center(
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 18.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "تحلية",
+                                  style: TextStyle(
+                                      color: mainColor,
+                                      fontFamily: 'tajwal',
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          BlocBuilder<DessertBloc, DessertState>(
+                            builder: (context, state) {
+                              if (state is DessertLoaded) {
+                                return Container(
+                                  //     color: Colors.red,
+                                  width: _width,
+                                  height: _height * .33,
+                                  child: ListView.builder(
+                                    itemCount: state.kitchens.length,
+                                    scrollDirection: Axis.horizontal,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return kitchenCard(
+                                        state.kitchens[index].id.toString(),
+                                        _width,
+                                        state.kitchens[index].picturePath,
+                                        state.kitchens[index].name,
+                                        state.kitchens[index].discount
+                                            .toString(),
+                                        state.kitchens[index].averageRating,
+                                        state.kitchens[index].address,
+                                        context,
+                                        state.kitchens[index].slug,
+                                        state.kitchens[index].slug,
+                                      );
+                                    },
+                                  ),
+                                );
+                              } else if (state is DessertLoading) {
+                                return SizedBox(
+                                  width: _width,
+                                  height: _height * .23,
+                                  child: Shimmer.fromColors(
+                                    period: Duration(milliseconds: 500),
+                                    baseColor: Colors.orange.withOpacity(.3),
+                                    highlightColor:
+                                        Colors.orange.withOpacity(.6),
+                                    child: ListView(
+                                      scrollDirection: Axis.horizontal,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              right: 16.0, bottom: 20),
+                                          child: Container(
+                                            height: _height * .9,
+                                            width: 300,
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(18),
+                                                color: Colors.white),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              right: 16.0, bottom: 20),
+                                          child: Container(
+                                            height: _height * .9,
+                                            width: 300,
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(18),
+                                                color: Colors.white),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              } else if (state is DessertFailed) {
+                                return Center(
+                                  child: Text("loading failed"),
+                                );
+                              }
+                              return Container();
+                            },
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 2.0),
+                  child: Container(
+                    //      height: _height * .367,
+                    width: _width,
+                    // color: Colors.blue,
+                    child: Center(
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 18.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "خصومات",
+                                  style: TextStyle(
+                                      color: mainColor,
+                                      fontFamily: 'tajwal',
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          BlocBuilder<DiscountBloc, DiscountState>(
+                            builder: (context, state) {
+                              if (state is DiscountLoaded) {
+                                return Container(
+                                  //     color: Colors.red,
+                                  width: _width,
+                                  height: _height * .33,
+                                  child: ListView.builder(
+                                    itemCount: state.kitchens.length,
+                                    scrollDirection: Axis.horizontal,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return kitchenCard(
+                                        state.kitchens[index].id.toString(),
+                                        _width,
+                                        state.kitchens[index].picturePath,
+                                        state.kitchens[index].name,
+                                        state.kitchens[index].discount
+                                            .toString(),
+                                        state.kitchens[index].averageRating,
+                                        state.kitchens[index].address,
+                                        context,
+                                        state.kitchens[index].slug,
+                                        state.kitchens[index].slug,
+                                      );
+                                    },
+                                  ),
+                                );
+                              } else if (state is DiscountLoading) {
+                                return SizedBox(
+                                  width: _width,
+                                  height: _height * .23,
+                                  child: Shimmer.fromColors(
+                                    period: Duration(milliseconds: 500),
+                                    baseColor: Colors.orange.withOpacity(.3),
+                                    highlightColor:
+                                        Colors.orange.withOpacity(.6),
+                                    child: ListView(
+                                      scrollDirection: Axis.horizontal,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              right: 16.0, bottom: 20),
+                                          child: Container(
+                                            height: _height * .9,
+                                            width: 300,
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(18),
+                                                color: Colors.white),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              right: 16.0, bottom: 20),
+                                          child: Container(
+                                            height: _height * .9,
+                                            width: 300,
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(18),
+                                                color: Colors.white),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              } else if (state is DiscountFailed) {
+                                return Center(
+                                  child: Text("discount fetch failed"),
+                                );
+                              }
+                              return Container();
+                            },
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical:20,horizontal: 25),
+                  child: Container(
+                    height: 60,
+                    width: 120,child: Center(
+                      child: 
+                      Text("عرض جميع المطاعم",style: TextStyle(
+                        color: Colors.white,fontSize: 22,
+                        fontWeight: FontWeight.w900
+                      ),),
+                    ),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        color: Colors.orange),
                   ),
                 )
               ],

@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:fluttericon/linearicons_free_icons.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:getwidget/components/button/gf_button.dart';
+import 'package:getwidget/getwidget.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:home_made/constants.dart';
@@ -59,7 +62,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
             child: Center(
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 8.0),
-                child: Text(priceAndQuantityBox.get("resturantName"),
+                child: Text(priceAndQuantityBox.get("resturantName") ?? "",
                     style: TextStyle(
                         fontFamily: 'tajwal',
                         color: Colors.black,
@@ -74,18 +77,53 @@ class _OrdersScreenState extends State<OrdersScreen> {
               Text(
                 "السلة",
                 style: TextStyle(
-                    color: Colors.white,
+                    color: Colors.black,
                     fontFamily: 'tajwal',
                     letterSpacing: 2,
                     fontWeight: FontWeight.w900),
               ),
             ],
           ),
-          brightness: Brightness.dark,
-          backgroundColor: yellow, //Color(0xffd29760),
+          brightness: Brightness.light,
+          backgroundColor: Colors.white, //Color(0xffd29760),
           iconTheme: IconThemeData(color: Colors.black),
         ),
-        body: Stack(
+        body:
+            /* priceAndQuantityBox.get("quantity") == 0
+            ? Container(
+                height: _height,
+                width: _width,
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "السلة فارغة",
+                        style: TextStyle(
+                            color: mainColor,
+                            fontFamily: 'tajwal',
+                            fontSize: 40,
+                            fontWeight: FontWeight.w800),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      GFButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        buttonBoxShadow: true,
+                        size: GFSize.LARGE,
+                        color: mainColor,fullWidthButton: true,
+                        text: 'اضف بعض الماكولات',
+                        textColor: Colors.white,
+                      )
+                    ],
+                  ),
+                ),
+              )
+            : */
+            Stack(
           children: [
             ListView(
               children: [
@@ -814,8 +852,15 @@ class _OrdersScreenState extends State<OrdersScreen> {
                             children: [
                               InkWell(
                                 onTap: () {
-                                  HiveRepo().deleteCartItems();
-                                  setState(() {});
+                                  if (priceAndQuantityBox.get("quantity") ==
+                                      0) {
+                                    Fluttertoast.showToast(
+                                        msg: "السلة بالفعل فارغة",
+                                       );
+                                  } else {
+                                    HiveRepo().deleteCartItems();
+                                    setState(() {});
+                                  }
                                 },
                                 child: Container(
                                   width: _width * .4,
@@ -843,7 +888,17 @@ class _OrdersScreenState extends State<OrdersScreen> {
                               ),
                               InkWell(
                                 onTap: () {
-                                  Navigator.push(context, MaterialPageRoute(builder: (ctx)=>AddAddress()));
+                                  if (priceAndQuantityBox.get("quantity") ==
+                                      0) {
+                                    Fluttertoast.showToast(
+                                        msg: "اضف بعض العناصر الي السلة",
+                                       );
+                                  } else {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (ctx) => AddAddress()));
+                                  }
                                 },
                                 child: Container(
                                   width: _width * .6,

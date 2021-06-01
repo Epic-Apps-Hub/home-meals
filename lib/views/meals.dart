@@ -46,12 +46,12 @@ class _OurMealsState extends State<OurMeals> {
                     MediaQuery.of(context).size.width,
                     "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
                     "كلاود",
-                    "بأسعار تبدأ من 20 د.أ"),
+              ),
                 mealCard(
                   MediaQuery.of(context).size.width,
                   "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
                   "كشري",
-                  "بأسعار تبدأ من 20 د.أ",
+               
                 ),
               ],
             ),

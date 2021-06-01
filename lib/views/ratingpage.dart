@@ -109,7 +109,8 @@ class _RatingPageState extends State<RatingPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Padding(
-                                padding: const EdgeInsets.symmetric(vertical:8.0),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -121,8 +122,8 @@ class _RatingPageState extends State<RatingPage> {
                                     Row(
                                       children: [
                                         RatingBar.builder(
-                                          initialRating: double.parse(
-                                              statee.kitchen.reviews.foodQuality),
+                                          initialRating: double.parse(statee
+                                              .kitchen.reviews.foodQuality),
                                           minRating: 1,
                                           textDirection: TextDirection.rtl,
                                           direction: Axis.horizontal,
@@ -142,14 +143,16 @@ class _RatingPageState extends State<RatingPage> {
                                             print(rating);
                                           },
                                         ),
-                                        Text(statee.kitchen.reviews.foodQuality),
+                                        Text(
+                                            statee.kitchen.reviews.foodQuality),
                                       ],
                                     )
                                   ],
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.symmetric(vertical:8.0),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -189,7 +192,8 @@ class _RatingPageState extends State<RatingPage> {
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.symmetric(vertical:8.0),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -231,7 +235,8 @@ class _RatingPageState extends State<RatingPage> {
                             ],
                           ),
                         ),
-                      ),SizedBox(
+                      ),
+                      SizedBox(
                         height: 30,
                       ),
                       ListView.builder(
@@ -260,8 +265,9 @@ class _RatingPageState extends State<RatingPage> {
                   height: _height,
                   width: _width,
                   child: Center(
-                    child: Text("Loading"),
-                  ),
+                      child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation(Colors.black),
+                  )),
                 );
               }
               return Container();
@@ -269,11 +275,7 @@ class _RatingPageState extends State<RatingPage> {
           );
         } else if (statee is KitchensLoading) {
           return Container(
-            height: _height,
-            width: _width,
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
+           
           );
         }
         return Container();

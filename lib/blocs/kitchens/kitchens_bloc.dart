@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:home_made/models/category.dart';
 import 'package:home_made/models/kitchen.dart';
 import 'package:home_made/models/rating.dart';
 import 'package:home_made/models/specificKitchen.dart';
@@ -23,7 +24,7 @@ class KitchensBloc extends Bloc<KitchensEvent, KitchensState> {
   ) async* {
     if (event is FetchKitchens) {
       yield KitchensLoading();
-      List<Kitchen> items = await kitechensRepo.getAllKitchens();
+      List<Kitchen> items = await kitechensRepo.getNewKitchens();
       print("items are $items");
 
       if (items == null) {
@@ -33,10 +34,8 @@ class KitchensBloc extends Bloc<KitchensEvent, KitchensState> {
       }
     }
     if (event is FetchSpecificKitchen) {
-      EasyLoading.show();
       SpecificKitchen specificKitchen =
           await kitechensRepo.getSpecificKitchen(event.slug);
-      EasyLoading.dismiss();
 
       if (specificKitchen == null) {
         yield KitchenLoadFailed("an error occured");
@@ -44,5 +43,7 @@ class KitchensBloc extends Bloc<KitchensEvent, KitchensState> {
         yield KitchenLoaded(specificKitchen);
       }
     }
+
+
   }
 }

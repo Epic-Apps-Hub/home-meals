@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "383697543559",
+    "project_id": "homemeals-55e8f",
+    "storage_bucket": "homemeals-55e8f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:383697543559:android:896353408d3c64c47b3322",
+        "android_client_info": {
+          "package_name": "com.example.home_made"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "383697543559-l27f4jcdnt5l5607pp56v82821epbk50.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDn_AMEZ-apJZmuQMG7q_pfd44zt_etEGA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "383697543559-l27f4jcdnt5l5607pp56v82821epbk50.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

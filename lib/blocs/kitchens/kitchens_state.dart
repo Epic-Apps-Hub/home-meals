@@ -28,3 +28,5 @@ class KitchenLoadFailed extends KitchensState{
 
   KitchenLoadFailed(this.message);
 }
+
+

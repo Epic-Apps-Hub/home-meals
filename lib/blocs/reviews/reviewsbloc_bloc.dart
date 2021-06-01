@@ -18,9 +18,7 @@ class ReviewsblocBloc extends Bloc<ReviewsblocEvent, ReviewsblocState> {
     ReviewsblocEvent event,
   ) async* {
     if (event is FetchSpecificKitchenComments) {
-      EasyLoading.show();
       Rating rating = await kitechensRepo.getSpecificKitchenRating(event.id);
-      EasyLoading.dismiss();
 
       if (rating == null) {
         yield ReviewsFailed();

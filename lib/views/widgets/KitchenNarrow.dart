@@ -12,7 +12,7 @@ import 'package:home_made/repositories/kitchensRepo.dart';
 import 'package:home_made/views/DetailsScreen.dart';
 import 'package:page_transition/page_transition.dart';
 
-Widget kitchenCard(
+Widget kitchenCard2(
     String id,
     double fullWidth,
     String picUrl,
@@ -59,10 +59,10 @@ Widget kitchenCard(
                 type: PageTransitionType.fade));
       },
       child: Padding(
-        padding: const EdgeInsets.only(right:16.0),
+        padding: const EdgeInsets.only(right:0),
         child: Container(
-          height: 269,
-          width: 300,
+          height: 190,
+          width: 200,
           child: Center(
               child: Column(
             children: [
@@ -79,8 +79,8 @@ Widget kitchenCard(
                               spreadRadius: 2,
                               offset: Offset(.5, 1))
                         ]),
-                    width: 300,
-                    height: 160,
+                    width: 160,
+                    height: 140,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(18),
                       child: CachedNetworkImage(
